@@ -6,11 +6,27 @@
 /*   By: vblanco- <vblanco-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 19:39:39 by vblanco-          #+#    #+#             */
-/*   Updated: 2026/01/08 19:26:05 by vblanco-         ###   ########.fr       */
+/*   Updated: 2026/01/09 18:10:05 by vblanco-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+void	*ft_memcpy(void *dest, const void *src, size_t n)
+{
+	unsigned char		*str;
+	const unsigned char	*in;
+
+	in = (const unsigned char *) src;
+	str = (unsigned char *) dest;
+	while (n > 0)
+	{
+		*str++ = (unsigned char)*in;
+		in++;
+		n--;
+	}
+	return (dest);
+}
 
 char	*ft_stash_next(char *stash)
 {
@@ -22,14 +38,10 @@ char	*ft_stash_next(char *stash)
 	while (stash[index] && stash[index] != '\n')
 		index++;
 	if (stash[index] != '\n')
-	{
-		free(stash);
-		return (NULL);
-	}
+		return (free(stash), NULL);
 	s_len = ft_strlen(stash);
 	temp = ft_substr(stash, index + 1, s_len - index);
-	free(stash);
-	return (temp);
+	return (free(stash), temp);
 }
 
 char	*ft_line(char *stash)
@@ -42,13 +54,9 @@ char	*ft_line(char *stash)
 		index++;
 	if (stash[index] == '\n')
 		index++;
-	line = malloc(sizeof(char) * index + 1);
+	line = malloc(sizeof(char) * (index + 1));
 	if (line == NULL)
-	{
-		free(line);
-		free (stash);
-		return (NULL);
-	}
+		return (free(line), NULL);
 	index = 0;
 	while (stash[index] && stash[index] != '\n')
 	{
@@ -61,22 +69,12 @@ char	*ft_line(char *stash)
 	return (line);
 }
 
-char	*ft_freejoin(char *buffer, char *stash, int s2len)
-{
-	char	*temp;
-
-	temp = ft_strjoin(stash, buffer, s2len);
-	free(stash);
-	return (temp);
-}
-
 char	*ft_add_stash(int fd, char *stash)
 {
 	char	*buffer;
+	char	*temp;
 	int		i_read;
 
-	if (stash == NULL)
-		stash = ft_strdup("");
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 		return (NULL);
@@ -85,18 +83,19 @@ char	*ft_add_stash(int fd, char *stash)
 	{
 		i_read = read(fd, buffer, BUFFER_SIZE);
 		if (i_read == -1)
-		{
-			free(buffer);
-			free(stash);
-			return (NULL);
-		}
+			return (free(buffer), free(stash), NULL);
+		if (i_read == 0)
+			break ;
 		buffer[i_read] = '\0';
-		stash = ft_freejoin(buffer, stash, i_read);
+		temp = ft_strjoin(stash, buffer, i_read);
+		free(stash);
+		stash = temp;
+		if (!stash)
+			return (free(buffer), NULL);
 		if (ft_strchr(buffer, '\n'))
 			break ;
 	}
-	free(buffer);
-	return (stash);
+	return (free(buffer), stash);
 }
 
 char	*get_next_line(int fd)
@@ -104,7 +103,7 @@ char	*get_next_line(int fd)
 	static char	*stash;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &line, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	stash = ft_add_stash(fd, stash);
 	if (stash == NULL || stash[0] == '\0')

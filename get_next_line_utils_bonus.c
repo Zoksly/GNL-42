@@ -6,15 +6,15 @@
 /*   By: vblanco- <vblanco-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/18 21:47:18 by vblanco-          #+#    #+#             */
-/*   Updated: 2026/01/08 18:37:55 by vblanco-         ###   ########.fr       */
+/*   Updated: 2026/01/09 18:10:50 by vblanco-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-int	ft_strlen(const char *s)
+size_t	ft_strlen(const char *s)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
 	while (s[i] != '\0')
@@ -84,24 +84,22 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 char	*ft_strjoin(char const *s1, char const *s2, int s2len)
 {
 	size_t	i;
+	size_t	s1len;
 	char	*str;
 	char	*s3;
 
-	if (s1 == NULL && s2 == NULL)
-		return (ft_strdup(""));
-	else if (s1 == NULL)
-		return (ft_strdup(s2));
-	else if (s2 == NULL)
-		return (ft_strdup(s1));
-	i = ft_strlen(s1) + s2len;
+	if (s1 == NULL)
+		s1 = "";
+	if (s2 == NULL)
+		s2 = "";
+	s1len = ft_strlen(s1);
+	i = s1len + s2len;
 	str = malloc(sizeof(char) * (i + 1));
 	if (str == NULL)
 		return (NULL);
 	s3 = str;
-	while (*s1)
-		*str++ = *s1++;
-	while (*s2)
-		*str++ = *s2++;
-	*str = '\0';
+	ft_memcpy(str, s1, s1len);
+	ft_memcpy(str + s1len, s2, s2len);
+	str[i] = '\0';
 	return (s3);
 }
