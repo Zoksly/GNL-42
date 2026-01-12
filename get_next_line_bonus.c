@@ -19,6 +19,8 @@ char	*ft_stash_next(char *stash)
 	char	*temp;
 
 	index = 0;
+	if (!stash)
+		return (free(stash), NULL);
 	while (stash[index] && stash[index] != '\n')
 		index++;
 	if (stash[index] != '\n')
@@ -38,9 +40,9 @@ char	*ft_line(char *stash)
 		i++;
 	if (stash[i] == '\n')
 		i++;
-	line = malloc(sizeof(char) * i + 1);
+	line = malloc(sizeof(char) * (i + 1));
 	if (line == NULL)
-		return (free(line), NULL);
+		return (free(line), free(stash), NULL);
 	i = 0;
 	while (stash[i] && stash[i] != '\n')
 	{
@@ -103,7 +105,7 @@ char	*get_next_line(int fd)
 	static char	*stash[1024];
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd >= 1024)
 		return (NULL);
 	stash[fd] = ft_add_stash(fd, stash[fd]);
 	if (stash[fd] == NULL || stash[fd][0] == '\0')

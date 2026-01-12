@@ -86,7 +86,6 @@ char	*ft_strjoin(char const *s1, char const *s2, int s2len)
 	size_t	i;
 	size_t	s1len;
 	char	*str;
-	char	*s3;
 
 	if (s1 == NULL)
 		s1 = "";
@@ -97,9 +96,8 @@ char	*ft_strjoin(char const *s1, char const *s2, int s2len)
 	str = malloc(sizeof(char) * (i + 1));
 	if (str == NULL)
 		return (NULL);
-	s3 = str;
 	ft_memcpy(str, s1, s1len);
 	ft_memcpy(str + s1len, s2, s2len);
 	str[i] = '\0';
-	return (s3);
+	return (str);
 }

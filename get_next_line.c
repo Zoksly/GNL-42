@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
 void	*ft_memcpy(void *dest, const void *src, size_t n)
 {
@@ -35,6 +36,8 @@ char	*ft_stash_next(char *stash)
 	char	*temp;
 
 	index = 0;
+	if (!stash)
+		return (free(stash), NULL);
 	while (stash[index] && stash[index] != '\n')
 		index++;
 	if (stash[index] != '\n')
@@ -56,7 +59,7 @@ char	*ft_line(char *stash)
 		index++;
 	line = malloc(sizeof(char) * (index + 1));
 	if (line == NULL)
-		return (free(line), NULL);
+		return (free(line), free(stash), NULL);
 	index = 0;
 	while (stash[index] && stash[index] != '\n')
 	{
@@ -117,7 +120,7 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-/* int main(void)
+int main(void)
 {
     int     fd;
     char    *line;
@@ -131,4 +134,4 @@ char	*get_next_line(int fd)
 	printf("BUFFER-SIZE : %d", BUFFER_SIZE);
     close(fd);
     return (0);
-} */
+}
